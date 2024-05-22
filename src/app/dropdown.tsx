@@ -1,7 +1,8 @@
 "use client";
 
 import { Check, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { Virtuoso } from "react-virtuoso";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -14,9 +15,51 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
 
-export function Dropdown({ fonts }: { fonts: string[] }) {
+function VirtualListItem({
+  index,
+  fonts,
+  value,
+  setValue,
+  setOpen,
+}: {
+  index: number;
+  fonts: { name: string; value: string }[];
+  value: string;
+  setValue: (value: string) => void;
+  setOpen: (open: boolean) => void;
+}) {
+  return (
+    <CommandItem
+      value={fonts[index].value}
+      onSelect={currentValue => {
+        setValue(currentValue === value ? "" : currentValue);
+        setOpen(false);
+      }}
+    >
+      <Check
+        className={cn("mr-2 h-4 w-4", value === fonts[index].value ? "opacity-100" : "opacity-0")}
+      />
+      {fonts[index].name}
+    </CommandItem>
+  );
+}
+
+export function Dropdown({ fonts }: { fonts: { name: string; value: string }[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+
+  const itemContent = useCallback(
+    (index: number) => (
+      <VirtualListItem
+        index={index}
+        fonts={fonts}
+        value={value}
+        setValue={setValue}
+        setOpen={setOpen}
+      />
+    ),
+    [fonts, value, setValue, setOpen],
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -27,7 +70,7 @@ export function Dropdown({ fonts }: { fonts: string[] }) {
           aria-expanded={open}
           className="w-72 justify-between"
         >
-          {value || "Select font..."}
+          {value ? fonts.find(item => item.value === value)?.name : "Select font..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -36,21 +79,7 @@ export function Dropdown({ fonts }: { fonts: string[] }) {
           <CommandInput placeholder="Search framework..." />
           <CommandEmpty>No framework found.</CommandEmpty>
           <CommandGroup>
-            {fonts.map(font => (
-              <CommandItem
-                key={font}
-                value={font}
-                onSelect={currentValue => {
-                  setValue(currentValue === value ? "" : currentValue);
-                  setOpen(false);
-                }}
-              >
-                <Check
-                  className={cn("mr-2 h-4 w-4", value === font ? "opacity-100" : "opacity-0")}
-                />
-                {font}
-              </CommandItem>
-            ))}
+            <Virtuoso style={{ height: 305 }} totalCount={fonts.length} itemContent={itemContent} />
           </CommandGroup>
         </Command>
       </PopoverContent>
