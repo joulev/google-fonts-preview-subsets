@@ -8,6 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "1.0.5",
+    "@radix-ui/react-popover": "1.0.7",
+    "@radix-ui/react-slot": "1.0.2",
     "@trivago/prettier-plugin-sort-imports": "4.3.0",
     "@types/node": "20.12.12",
     "@types/react": "18.3.2",
@@ -15,6 +18,7 @@
     "@types/subset-font": "1.4.3",
     "@vercel/style-guide": "6.0.0",
     "autoprefixer": "10.4.19",
+    "cmdk": "0.2.1",
     "cva": "1.0.0-beta.1",
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.3",
@@ -30,6 +34,7 @@
     "subset-font": "2.3.0",
     "tailwind-merge": "2.3.0",
     "tailwindcss": "3.4.3",
+    "tailwindcss-animate": "1.0.7",
     "typescript": "5.4.5"
   }
 }
