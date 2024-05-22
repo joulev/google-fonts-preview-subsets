@@ -38,9 +38,9 @@ async function main() {
   const fonts: { name: string; base64: string }[] = [];
   const failedFonts: string[] = [];
 
-  const generatedLength = process.env.DEBUG ? 10 : fontList.items.length;
+  const generatedLength = process.env.DEBUG ? 30 : fontList.items.length;
   for (let i = 0; i < generatedLength; i++) {
-    const key = `(${i.toString().padStart(4)}/${fontList.items.length}) ${fontList.items[i].family}`;
+    const key = `(${(i + 1).toString().padStart(4)}/${fontList.items.length}) ${fontList.items[i].family}`;
     console.time(key);
     const buffer = await generateFontSubset(fontList.items[i]);
     if (!buffer) failedFonts.push(fontList.items[i].family);
