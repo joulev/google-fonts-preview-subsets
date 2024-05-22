@@ -16,13 +16,19 @@ module.exports = {
   rules: {
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-confusing-void-expression": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
     "import/no-extraneous-dependencies": "off",
     "import/order": "off",
     "react/jsx-sort-props": "off",
   },
   overrides: [
     {
-      files: ["src/app/**/page.tsx", "src/app/**/layout.tsx", "tailwind.config.ts"],
+      files: [
+        "src/app/**/page.tsx",
+        "src/app/**/layout.tsx",
+        "tailwind.config.ts",
+        "next.config.mjs",
+      ],
       rules: { "import/no-default-export": "off" },
     },
   ],

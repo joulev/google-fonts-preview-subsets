@@ -1,6 +1,7 @@
 // @ts-check
+import { withNextJSRouteTypes } from "nextjs-route-types";
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {};
 
-export default nextConfig;
+export default withNextJSRouteTypes(nextConfig);
