@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "build": "bun run scripts/generate-fonts.ts && next build",
+    "build": "bun run scripts/generate-fonts.ts && next build && cp cloudflare/_headers out",
     "dev": "next dev",
     "format": "prettier --write .",
     "lint": "next lint",
