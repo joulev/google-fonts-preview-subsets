@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, ChevronsUpDown } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 
 import { Button } from "~/components/ui/button";
@@ -47,18 +47,24 @@ function VirtualListItem({
 export function Dropdown({ fonts }: { fonts: { name: string; value: string }[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [search, setSearch] = useState("");
+
+  const filteredFonts = useMemo(() => {
+    if (!search) return fonts;
+    return fonts.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+  }, [fonts, search]);
 
   const itemContent = useCallback(
     (index: number) => (
       <VirtualListItem
         index={index}
-        fonts={fonts}
+        fonts={filteredFonts}
         value={value}
         setValue={setValue}
         setOpen={setOpen}
       />
     ),
-    [fonts, value, setValue, setOpen],
+    [filteredFonts, value, setValue, setOpen],
   );
 
   return (
@@ -75,11 +81,15 @@ export function Dropdown({ fonts }: { fonts: { name: string; value: string }[] }
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-72 p-0">
-        <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+        <Command shouldFilter={false}>
+          <CommandInput placeholder="Search font..." value={search} onValueChange={setSearch} />
+          <CommandEmpty>No font found.</CommandEmpty>
           <CommandGroup>
-            <Virtuoso style={{ height: 305 }} totalCount={fonts.length} itemContent={itemContent} />
+            <Virtuoso
+              style={{ height: 305 }}
+              totalCount={filteredFonts.length}
+              itemContent={itemContent}
+            />
           </CommandGroup>
         </Command>
       </PopoverContent>
