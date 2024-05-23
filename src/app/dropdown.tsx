@@ -126,6 +126,7 @@ export function Dropdown({ fonts }: { fonts: Font[] }) {
               style={{ height: 305 }}
               data={filteredFonts}
               itemContent={itemContent}
+              increaseViewportBy={300}
               itemsRendered={items => void onItemsRendered(items)}
             />
           </CommandGroup>
