@@ -1,8 +1,8 @@
 "use client";
 
 import { Check, ChevronsUpDown } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
-import { Virtuoso } from "react-virtuoso";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { type ListItem, Virtuoso } from "react-virtuoso";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -14,6 +14,19 @@ import {
 } from "~/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
 import { cn } from "~/lib/utils";
+
+interface Font {
+  name: string;
+  value: string;
+}
+
+function getCssFontName(font: Font) {
+  return `font-picker-${font.value.replaceAll(" ", "+")}`;
+}
+
+function getFontUrl(font: Font) {
+  return `/v1/${font.name.replaceAll(" ", "+")}`;
+}
 
 function VirtualListItem({
   index,
@@ -35,6 +48,7 @@ function VirtualListItem({
         setValue(currentValue === value ? "" : currentValue);
         setOpen(false);
       }}
+      style={{ fontFamily: `'${getCssFontName(fonts[index])}', var(--font-sans)` }}
     >
       <Check
         className={cn("mr-2 h-4 w-4", value === fonts[index].value ? "opacity-100" : "opacity-0")}
@@ -44,10 +58,16 @@ function VirtualListItem({
   );
 }
 
-export function Dropdown({ fonts }: { fonts: { name: string; value: string }[] }) {
+export function Dropdown({ fonts }: { fonts: Font[] }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [search, setSearch] = useState("");
+  const loadedFonts = useRef<Set<string> | null>(null);
+
+  function getLoadedFonts() {
+    if (!loadedFonts.current) loadedFonts.current = new Set();
+    return loadedFonts.current;
+  }
 
   const filteredFonts = useMemo(() => {
     if (!search) return fonts;
@@ -66,6 +86,23 @@ export function Dropdown({ fonts }: { fonts: { name: string; value: string }[] }
     ),
     [filteredFonts, value, setValue, setOpen],
   );
+
+  const onItemsRendered = useCallback(async (items: ListItem<Font>[]) => {
+    const loadedFontsSet = getLoadedFonts();
+    await Promise.all(
+      items.map(async item => {
+        if (!item.data) return;
+        const font = item.data;
+        const cssFontName = getCssFontName(font);
+        if (loadedFontsSet.has(cssFontName)) return;
+
+        const fontface = new FontFace(cssFontName, `url(${getFontUrl(font)})`);
+        await fontface.load();
+        document.fonts.add(fontface);
+        loadedFontsSet.add(cssFontName);
+      }),
+    );
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -87,8 +124,9 @@ export function Dropdown({ fonts }: { fonts: { name: string; value: string }[] }
           <CommandGroup>
             <Virtuoso
               style={{ height: 305 }}
-              totalCount={filteredFonts.length}
+              data={filteredFonts}
               itemContent={itemContent}
+              itemsRendered={items => void onItemsRendered(items)}
             />
           </CommandGroup>
         </Command>
