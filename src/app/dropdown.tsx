@@ -53,7 +53,7 @@ function VirtualListItem({
       <Check
         className={cn("mr-2 h-4 w-4", value === fonts[index].value ? "opacity-100" : "opacity-0")}
       />
-      {fonts[index].name}
+      <span className="truncate">{fonts[index].name}</span>
     </CommandItem>
   );
 }
@@ -111,13 +111,13 @@ export function Dropdown({ fonts }: { fonts: Font[] }) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-72 justify-between"
+          className="w-60 justify-between"
         >
           {value ? fonts.find(item => item.value === value)?.name : "Select font..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72 p-0">
+      <PopoverContent className="w-60 p-0">
         <Command shouldFilter={false}>
           <CommandInput placeholder="Search font..." value={search} onValueChange={setSearch} />
           <CommandEmpty>No font found.</CommandEmpty>

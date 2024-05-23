@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import "~/app/globals.css";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -9,3 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://google-fonts-preview-subsets.joulev.dev"),
+};
